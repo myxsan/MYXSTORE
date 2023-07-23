@@ -8,8 +8,10 @@ import Currency from "@/components/ui/currency";
 import Button from "@/components/ui/button";
 import useCart from "@/hooks/use-cart";
 import { toast } from "react-hot-toast/headless";
+import { useIsMounted } from "@/hooks/use-is-mounted";
 
 const Summary = () => {
+  const isMounted = useIsMounted();
   const searchParams = useSearchParams();
   const items = useCart((state) => state.items);
   const removeAll = useCart((state) => state.removeAll);
@@ -40,6 +42,8 @@ const Summary = () => {
     window.location = response.data.url;
   };
 
+  if (!isMounted) return null;
+
   return (
     <div
       className="
@@ -54,7 +58,11 @@ const Summary = () => {
           <Currency value={totalPrice} />
         </div>
       </div>
-      <Button onClick={onCheckout} className="w-full mt-6">
+      <Button
+        disabled={!items.length}
+        onClick={onCheckout}
+        className="w-full mt-6"
+      >
         Checkout
       </Button>
     </div>
